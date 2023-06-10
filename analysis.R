@@ -3,6 +3,9 @@ library(dplyr)
 balls = read.csv("C:\\Users\\obind\\Downloads\\Stats 100\\Project\\deliveries.csv")
 balls[balls$player_dismissed == "", ]$player_dismissed = NA
 
+library(ggplot2)
+ggplot(data = balls, aes(x = batsman_runs)) + geom_histogram()
+
 batsmenInns = balls %>% group_by(match_id, batsman)
 
 #Streaks vs expected streaks
@@ -64,8 +67,6 @@ wide_noball = sum(balls$wide_runs + balls$noball_runs > 0)
 wicket_total = sum(balls$player_dismissed == balls$batsman, na.rm=TRUE)
 wicket_rate = wicket_total / (nrow(balls) - wide_noball)
 
- 
-library(ggplot2)
 ggplot(data = balls_counted[balls_counted$dismissed == 1 & balls_counted$inning_length > 0, ], aes(x = inning_length)) +
   geom_histogram(aes(y=..density..), binwidth=1) + ylim(0, 0.06) +
   scale_x_continuous(limits = c(0, 72), breaks = seq(0, 72, 6)) +
