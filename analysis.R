@@ -8,6 +8,33 @@ ggplot(data = balls, aes(x = batsman_runs)) + geom_histogram()
 
 batsmenInns = balls %>% group_by(match_id, batsman)
 
+#Ball to ball independence
+balls$next_runs = NA
+for (i in 1:nrow(balls)){
+  cur = balls[i, "batsman"]
+  match = balls[i, "match_id"]
+  for (j in (i+1):nrow(balls)){
+    print(paste("i: ", i, ", j: ", j))
+    if (match != balls[j, "match_id"]){
+       break
+       print(paste("reset match, j=", j))
+     }
+    else {
+     if (cur == balls[j, "batsman"]){
+      balls[i, "next_runs"] = balls[j, "batsman_runs"]
+      break
+     }
+    }
+ }
+}
+
+fq_table = table(balls$batsman_runs, balls$next_runs)
+fq_table = fq_table[c(1:5, 7), c(1:5, 7)] #exclude 5s and 7s
+fq_tab_norm = t(apply(fq_table, 1, function(x) x/sum(x)))
+heatmap(fq_tab_norm, Rowv = NA, Colv = NA)
+mtext("runs on ball i+1", side = 1, line = 2.5)
+mtext("ball on ball i", side = 2, line = 2.5)
+
 #Streaks vs expected streaks
 expected_streaks = batsmenInns %>% summarize(
     (2 * sum(batsman_runs < 1) * sum(batsman_runs >= 1) / n()),          
