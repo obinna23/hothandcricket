@@ -3,8 +3,6 @@ library(dplyr)
 balls = read.csv("C:\\Users\\obind\\Downloads\\Stats 100\\Project\\deliveries.csv")
 balls[balls$player_dismissed == "", ]$player_dismissed = NA
 
-
-
 batsmenInns = balls %>% group_by(match_id, batsman)
 
 #Streaks vs expected streaks
