@@ -19,11 +19,8 @@ count_runs = function(data, num){
   streaks = 0
   score = 0
   not_score = 0
-  #print(1:(length(data)-1))
   if (length(data) >= 3){
     for (i in 1:(length(data)-1)){
-      #print(data[1])
-      #print(i)
       if (data [i] < num){not_score = not_score + 1}
       else{score = + 1}
       if ((data[i] < num) != (data[i+1] < num)){
@@ -55,27 +52,6 @@ wolf_warditz = batsmenInns %>% summarize(
   wolf_warditz_test(batsman_runs, 6)
 )
 
-"""
-observed_streaks = batsmenInns %>% summarize(
-  count_streaks(batsman_runs, 1),
-  count_streaks(batsman_runs, 4),
-  count_streaks(batsman_runs, 6)
-)
-
-#wolf = batsmenInns %>% summarize(
-
-colnames(observed_streaks) = c("match_id", "batsman", "score_streaks", "four_streaks", "six_streaks")
-
-plot(expected_streaks$score_streaks, observed_streaks$score_streaks)
-plot(expected_streaks$four_streaks, observed_streaks$four_streaks)
-plot(expected_streaks$six_streaks, observed_streaks$six_streaks)
-
-ggplot(data = expected_streaks, aes(x = score_streaks, y = observed_streaks$score_streaks)) +
-  geom_hex() +
-  geom_function(fun = function(mu) mu, color="red") +
-  geom_function(fun = function(mu) mu + (mu-1)*(mu-2)/((mu + (mu-1)*(mu-2))/mu), color="red")
-"""
-
 #Balls vs geometric
 balls_counted = batsmenInns %>% summarize(
   sum(wide_runs + noball_runs > 0),
@@ -99,15 +75,8 @@ ggplot(data = balls_counted[balls_counted$dismissed == 1 & balls_counted$inning_
   geom_function(fun = function(x) (wicket_rate)*exp(-wicket_rate*x), color="red") +
   ggtitle("Balls before dismissal vs geometric distribution")
 
-#hist(balls_counted$inning_length, freq = FALSE)
-obvBalls = table(balls_counted[balls_counted$inning_length > 0 & balls_counted$inning_length <= 3,]$inning_length)
+obvBalls = table(balls_counted[balls_counted$inning_length > 0,]$inning_length)
 obvBalls = as.data.frame(obvBalls)
 obvBalls$Var1 = as.numeric(obvBalls$Var1)
 obvBalls$geom = (1 - wicket_rate)**obvBalls$Var1*wicket_rate
-#obvBalls$geom = obvBalls$geom / sum(obvBalls$geom)
 chisq.test(obvBalls$Freq, obvBalls$geom)
-
-geom = (1 - wicket_rate)^(-1:99)*wicket_rate
-line(geom)
-
-hist(data = balls_counted[balls_counted$dismissed == 1 & balls_counted$inning_length > 0, ], x = inning_length)
